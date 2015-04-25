@@ -1,0 +1,27 @@
+#!/bin/bash
+
+VERSION=$1
+
+if [ -z "$VERSION" ]; then
+    echo "Usage: $0 version";
+    exit 1;
+fi
+
+SUFFIX=`echo "${VERSION}" | sed -e "s/\.//g"`
+
+rm -rf /tmp/scintilla /tmp/scite \
+  && curl -SL "http://prdownloads.sourceforge.net/scintilla/scite${SUFFIX}.tgz" | tar -xzC /tmp \
+  && make -C /tmp/scintilla/gtk \
+  && make -C /tmp/scite/gtk \
+  && cd /tmp/scite/gtk \
+  && checkinstall -y \
+    --install=no \
+    --pkgname=scite \
+    --pkgversion="${VERSION}" \
+    --pkglicense=GPL \
+    --maintainer="Sergei Morozov \<morozov@tut.by\>" \
+    --provides=scite \
+    --nodoc \
+    --pkgsource="http://www.scintilla.org/" \
+    --pakdir=/data \
+  && cd -
